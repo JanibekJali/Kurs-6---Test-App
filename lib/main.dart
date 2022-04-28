@@ -13,21 +13,11 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
       ),
       home: const QuizPage(),
@@ -43,7 +33,8 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  List<Widget> icons = <Widget>[];
+  String suroo;
+  bool buttubuIndicator;
 
   Widget tuuraIkonka = const Padding(
       padding: EdgeInsets.only(left: 20.0),
@@ -61,11 +52,26 @@ class _QuizPageState extends State<QuizPage> {
       size: 45.0,
     ),
   );
+  //userAnswered
+  List<Widget> ikonkalar = <Widget>[];
+  void koldonuuchuJoopBerdi(bool koldonuuchununJoobu) {
+    bool tuuraJooptor = suroonunMeesi.jooptuAlipKel();
+    if (koldonuuchununJoobu == tuuraJooptor) {
+      ikonkalar.add(tuuraIkonka);
+    } else {
+      ikonkalar.add(kataIkonka);
+    }
+    suroonunMeesi.suroonuOtkoz();
+    suroo = suroonunMeesi.suroonuAlipkel();
+    if (suroo == 'Buttu') {
+      buttubuIndicator = true;
+    }
+    setState(() {});
+  }
 
-  String suroo;
   @override
   void initState() {
-    suroo = SuroonunMeesi().suroonuAlipkel();
+    suroo = suroonunMeesi.suroonuAlipkel();
     super.initState();
   }
 
@@ -88,36 +94,45 @@ class _QuizPageState extends State<QuizPage> {
               suroo ?? 'Suroo bosh',
               style: const TextStyle(fontSize: 35.0, color: Colors.white),
             ),
-            Column(
-              children: [
-                CustomButton(
-                  text: 'Туура',
-                  tus: const Color(0xff4EA052),
-                  onPressed: () {
-                    setState(() {});
-                    icons.add(tuuraIkonka);
-                  },
-                ),
-                const SizedBox(
-                  height: 25.0,
-                ),
-                CustomButton(
-                  text: 'Ката',
-                  tus: const Color(0xffF54335),
-                  onPressed: () {
-                    setState(() {
-                      icons.add(kataIkonka);
-                    });
-                  },
-                ),
-                const SizedBox(
-                  height: 25.0,
-                ),
-                Row(
-                  children: icons,
-                )
-              ],
-            )
+            if (buttubuIndicator == true)
+              CustomButton(
+                text: 'Kairadan Bashta',
+                onPressed: () {
+                  suroonunMeesi.kairaBashta();
+                  suroo = suroonunMeesi.suroonuAlipkel();
+                  buttubuIndicator = false;
+                  ikonkalar = [];
+                  setState(() {});
+                },
+              )
+            else
+              Column(
+                children: [
+                  CustomButton(
+                    text: 'Туура',
+                    tus: const Color(0xff4EA052),
+                    onPressed: () {
+                      koldonuuchuJoopBerdi(true);
+                    },
+                  ),
+                  const SizedBox(
+                    height: 25.0,
+                  ),
+                  CustomButton(
+                    text: 'Ката',
+                    tus: const Color(0xffF54335),
+                    onPressed: () {
+                      koldonuuchuJoopBerdi(false);
+                    },
+                  ),
+                  const SizedBox(
+                    height: 25.0,
+                  ),
+                  Row(
+                    children: ikonkalar,
+                  )
+                ],
+              )
           ],
         ),
       ),
